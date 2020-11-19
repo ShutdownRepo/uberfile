@@ -4,6 +4,8 @@
 
   This project is installed by default in the pentesting OS [Exegol](https://github.com/ShutdownRepo/Exegol)
 
+  ![Example (with menus)](https://raw.githubusercontent.com/ShutdownRepo/uberfile/master/assets/example-menus.gif)
+
 # Install
   The install is pretty simple, just clone this git and install the requirements.
   ```
@@ -34,7 +36,9 @@
                           File to write on the target machine
     -l, --list            Print all the commands UberFiles can generate
   ```
-  If required options are not set, the tool will start in TUI (Terminal User Interface) with pretty menus.
+  If required options are not set, the tool will start in TUI (Terminal User Interface) with pretty menus but CLI works like a charm too.
+
+  ![Example (without menus)](https://raw.githubusercontent.com/ShutdownRepo/uberfile/master/assets/example-no-menus.gif)
 
 # Sources
   Some commands come from the following links
